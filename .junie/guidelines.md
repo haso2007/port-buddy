@@ -54,7 +54,8 @@ Project is written as multi-modular maven project and consists of the following 
 
 Written in Java 25. 
 Google checkstyle rules are used. 
-All variable which value is not changed must be marked with `final` modifier. 
+All variables which value is not changed must be marked with `final` modifier. 
+All method params must be marked with `final` modifier.
 For local variable `var` must be used instead of class name.
 Lombok library is used for getters/setters, log reference, ect.
 
