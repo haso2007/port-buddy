@@ -1,0 +1,24 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: port-buddy-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: port_buddy
+      POSTGRES_USER: port_buddy
+      POSTGRES_PASSWORD: port_buddy
+    ports:
+      - "5432:5432"
+    volumes:
+      - port_buddy_pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U port_buddy -d port_buddy"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  port_buddy_pg_data:
+    driver: local
