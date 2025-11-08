@@ -11,6 +11,22 @@ spring:
     hibernate:
       ddl-auto: none
     open-in-view: false
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 943200305645-kk9e9767lc9andmtlhamht42gjaguriq.apps.googleusercontent.com
+            client-secret: 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
+            scope: openid,profile,email
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+        provider:
+          google:
+            authorization-uri: https://accounts.google.com/o/oauth2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            jwk-set-uri: https://www.googleapis.com/oauth2/v3/certs
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
 management:
   endpoints:
     web:
@@ -20,3 +36,6 @@ management:
     health:
       probes:
         enabled: true
+cors:
+  allowed-origins:
+    - http://localhost:5173
