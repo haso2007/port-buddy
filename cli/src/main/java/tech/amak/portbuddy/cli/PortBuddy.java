@@ -90,7 +90,7 @@ public class PortBuddy implements Callable<Integer> {
                 return CommandLine.ExitCode.SOFTWARE;
             }
 
-            final var client = new HttpTunnelClient(config.getServerUrl(), tunnelId, hostPort.host, hostPort.port);
+            final var client = new HttpTunnelClient(config.getServerUrl(), tunnelId, hostPort.host, hostPort.port, config.getApiToken());
             client.runBlocking();
         } else {
             final var config = loadConfig();

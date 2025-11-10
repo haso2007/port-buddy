@@ -34,6 +34,7 @@ public class HttpTunnelClient {
     private final String tunnelId;
     private final String localHost;
     private final int localPort;
+    private final String authToken; // Bearer token for API auth
 
     private final OkHttpClient http = new OkHttpClient.Builder()
         .readTimeout(0, TimeUnit.MILLISECONDS) // keep-alive for WS
@@ -63,8 +64,11 @@ public class HttpTunnelClient {
      */
     public void runBlocking() {
         final var wsUrl = toWebSocketUrl(serverUrl, "/api/tunnel/" + tunnelId);
-        final var req = new Request.Builder().url(wsUrl).build();
-        webSocket = http.newWebSocket(req, new Listener());
+        final var request = new Request.Builder().url(wsUrl);
+        if (authToken != null && !authToken.isBlank()) {
+            request.addHeader("Authorization", "Bearer " + authToken);
+        }
+        webSocket = http.newWebSocket(request.build(), new Listener());
 
         try {
             closeLatch.await();
