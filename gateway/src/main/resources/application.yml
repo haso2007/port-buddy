@@ -3,6 +3,11 @@ server:
 
 eureka:
   client:
+    # Fetch registry updates from Eureka more frequently so the gateway sees
+    # service instance changes with lower latency.
+    registryFetchIntervalSeconds: 5
+    # Poll interval for refreshing Eureka server URLs (keep modest, default is 5 minutes)
+    eurekaServiceUrlPollIntervalSeconds: 60
     service-url:
       defaultZone: http://localhost:8761/eureka
 
