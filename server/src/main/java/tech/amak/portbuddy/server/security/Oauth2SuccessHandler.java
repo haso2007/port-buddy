@@ -1,8 +1,13 @@
+/*
+ * Copyright (c) 2025 AMAK Inc. All rights reserved.
+ */
+
 package tech.amak.portbuddy.server.security;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 import org.springframework.security.core.Authentication;
@@ -59,7 +64,7 @@ public class Oauth2SuccessHandler implements AuthenticationSuccessHandler {
         }
 
         final var token = jwtService.createToken(claims, userId);
-        final var redirectUrl = properties.gateway().url() + "/auth/callback?token=" + URLEncoder.encode(token, StandardCharsets.UTF_8);
+        final var redirectUrl = properties.gateway().url() + "/auth/callback?token=" + URLEncoder.encode(token, UTF_8);
         response.sendRedirect(redirectUrl);
     }
 }

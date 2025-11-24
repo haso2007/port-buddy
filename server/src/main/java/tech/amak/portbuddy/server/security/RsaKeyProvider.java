@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 AMAK Inc. All rights reserved.
+ */
+
 package tech.amak.portbuddy.server.security;
 
 import java.nio.charset.StandardCharsets;
@@ -37,6 +41,19 @@ public class RsaKeyProvider {
     @Getter
     private final String currentKid;
 
+    /**
+     * Constructs an instance of {@code RsaKeyProvider} by loading RSA keys from the provided application properties.
+     * This constructor validates the configuration of RSA keys and ensures the presence of at least one valid key.
+     *
+     * @param properties the application properties containing the JWT and RSA key configuration; must not be null
+     *                   and must properly configure the `app.jwt.rsa` and its required fields:
+     *                   <ul>
+     *                     <li>`app.jwt.rsa.currentKeyId`: the ID of the current RSA key, used for signing JWTs</li>
+     *                     <li>`app.jwt.rsa.keys`: a list of RSA key configurations,
+     *                      each including public and optionally private keys</li>
+     *                   </ul>
+     *                   An exception is thrown if any fields are improperly configured.
+     */
     public RsaKeyProvider(final AppProperties properties) {
         final var jwt = Objects.requireNonNull(properties.jwt(), "app.jwt must be configured");
         final var rsa = Objects.requireNonNull(jwt.rsa(), "app.jwt.rsa must be configured");

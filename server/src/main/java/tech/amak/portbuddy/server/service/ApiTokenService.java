@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 AMAK Inc. All rights reserved.
+ */
+
 package tech.amak.portbuddy.server.service;
 
 import java.nio.charset.StandardCharsets;
@@ -64,10 +68,15 @@ public class ApiTokenService {
      *     if the user has no tokens, an empty list is returned
      */
     public List<TokenView> listTokens(final String userId) {
-        final var list = tokensByUser.getOrDefault(userId, List.of());
-        final var out = new ArrayList<TokenView>(list.size());
-        for (var r : list) {
-            out.add(new TokenView(r.getId(), r.getLabel(), r.getCreatedAt(), r.isRevoked(), r.getLastUsedAt()));
+        final var records = tokensByUser.getOrDefault(userId, List.of());
+        final var out = new ArrayList<TokenView>(records.size());
+        for (final var record : records) {
+            out.add(new TokenView(
+                record.getId(),
+                record.getLabel(),
+                record.getCreatedAt(),
+                record.isRevoked(),
+                record.getLastUsedAt()));
         }
         return out;
     }
@@ -82,11 +91,11 @@ public class ApiTokenService {
      *     was not found or could not be revoked
      */
     public boolean revoke(final String userId, final String tokenId) {
-        final var list = tokensByUser.getOrDefault(userId, List.of());
-        for (var r : list) {
-            if (r.getId().equals(tokenId)) {
-                r.setRevoked(true);
-                tokensByHash.remove(r.getTokenHash());
+        final var tokens = tokensByUser.getOrDefault(userId, List.of());
+        for (final var tokenRecord : tokens) {
+            if (tokenRecord.getId().equals(tokenId)) {
+                tokenRecord.setRevoked(true);
+                tokensByHash.remove(tokenRecord.getTokenHash());
                 return true;
             }
         }
@@ -126,7 +135,7 @@ public class ApiTokenService {
             final var md = MessageDigest.getInstance("SHA-256");
             final var bytes = md.digest(val.getBytes(StandardCharsets.UTF_8));
             return Base64.getEncoder().encodeToString(bytes);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             throw new IllegalStateException("SHA-256 not available", e);
         }
     }

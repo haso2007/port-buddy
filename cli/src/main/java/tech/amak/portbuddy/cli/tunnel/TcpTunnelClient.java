@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 AMAK Inc. All rights reserved.
+ */
+
 package tech.amak.portbuddy.cli.tunnel;
 
 import static tech.amak.portbuddy.cli.utils.JsonUtils.MAPPER;
@@ -117,7 +121,7 @@ public class TcpTunnelClient {
             try {
                 final var message = MAPPER.readValue(text, WsTunnelMessage.class);
                 handleControl(message);
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 log.warn("Bad control message: {}", e.toString());
             }
         }
@@ -187,7 +191,7 @@ public class TcpTunnelClient {
                         if (trafficSink != null) {
                             trafficSink.onBytesIn(bytes.length);
                         }
-                    } catch (Exception e) {
+                    } catch (final Exception e) {
                         log.debug("Write to local TCP failed: {}", e.toString());
                     }
                 }
@@ -221,7 +225,7 @@ public class TcpTunnelClient {
                     trafficSink.onBytesOut(byteCount);
                 }
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // ignore
         } finally {
             try {

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 AMAK Inc. All rights reserved.
+ */
+
 package tech.amak.portbuddy.server.security;
 
 import org.springframework.context.annotation.Bean;
@@ -69,7 +73,7 @@ public class SecurityConfig {
                 .anyRequest().permitAll()
             )
             .oauth2Login(oauth -> oauth
-                // OAuth2 is used only to mint a JWT and redirect back. API calls must use Authorization: Bearer <token>.
+                // OAuth2 is used only to mint a JWT and redirect back. API calls must use Authorization: Bearer <token>
                 .successHandler(oauth2SuccessHandler)
             );
         return http.build();

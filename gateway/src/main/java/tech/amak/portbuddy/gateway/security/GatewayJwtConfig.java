@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 AMAK Inc. All rights reserved.
+ */
+
 package tech.amak.portbuddy.gateway.security;
 
 import org.springframework.beans.factory.annotation.Value;

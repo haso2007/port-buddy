@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 AMAK Inc. All rights reserved.
+ */
+
 package tech.amak.portbuddy.server.tunnel;
 
 import java.io.IOException;
@@ -112,7 +116,7 @@ public class TunnelRegistry {
             final var json = mapper.writeValueAsString(request);
             tunnel.session().sendMessage(new TextMessage(json));
             log.trace("Forwarded request {} to tunnel {}", json, tunnel.tunnelId());
-        } catch (IOException e) {
+        } catch (final IOException e) {
             tunnel.pending().remove(request.getId());
             future.completeExceptionally(e);
             return future;
@@ -250,9 +254,12 @@ public class TunnelRegistry {
         private String connectionId;
     }
 
+    @RequiredArgsConstructor
     public static class Tunnel {
+
         private final String subdomain;
         private final String tunnelId;
+
         @Setter
         private volatile WebSocketSession session;
         @Setter
@@ -261,11 +268,6 @@ public class TunnelRegistry {
         // Browser WS peers for this tunnel
         private final Map<String, WebSocketSession> browserByConnection = new ConcurrentHashMap<>();
         private final Map<WebSocketSession, Ids> browserReverse = new ConcurrentHashMap<>();
-
-        public Tunnel(String subdomain, String tunnelId) {
-            this.subdomain = subdomain;
-            this.tunnelId = tunnelId;
-        }
 
         public String subdomain() {
             return subdomain;

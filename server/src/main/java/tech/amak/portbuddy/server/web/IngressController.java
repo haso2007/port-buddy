@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 AMAK Inc. All rights reserved.
+ */
+
 package tech.amak.portbuddy.server.web;
 
 import java.io.IOException;
@@ -108,7 +112,7 @@ public class IngressController {
             final var status = resp.getStatus() == null ? 502 : resp.getStatus();
             response.setStatus(status);
             if (resp.getRespHeaders() != null) {
-                for (var header : resp.getRespHeaders().entrySet()) {
+                for (final var header : resp.getRespHeaders().entrySet()) {
                     final var name = header.getKey();
                     final var values = header.getValue();
                     if (name == null || values == null) {
@@ -119,7 +123,7 @@ public class IngressController {
                         // Skip hop-by-hop or conflicting headers
                         continue;
                     }
-                    for (var v : values) {
+                    for (final var v : values) {
                         if (v != null) {
                             response.addHeader(name, v);
                         }

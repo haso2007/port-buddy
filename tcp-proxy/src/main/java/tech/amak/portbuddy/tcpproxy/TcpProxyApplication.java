@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 AMAK Inc. All rights reserved.
+ */
+
 package tech.amak.portbuddy.tcpproxy;
 
 import org.springframework.boot.CommandLineRunner;
@@ -13,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @ConfigurationPropertiesScan
 public class TcpProxyApplication {
 
-    static void main(String[] args) {
+    static void main(final String[] args) {
         SpringApplication.run(TcpProxyApplication.class, args);
     }
 

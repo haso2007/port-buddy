@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 AMAK Inc. All rights reserved.
+ */
+
 package tech.amak.portbuddy.server.web;
 
 import org.springframework.http.MediaType;
@@ -15,6 +19,16 @@ import lombok.Data;
 @RequestMapping(path = "/api/auth", produces = MediaType.APPLICATION_JSON_VALUE)
 public class AuthApiController {
 
+    /**
+     * Retrieves the authenticated user's details based on the provided authentication principal.
+     * The method supports different types of principals, including Jwt, DefaultOidcUser, and OAuth2User.
+     * If the principal is not recognized, an exception is thrown.
+     *
+     * @param principal the authenticated user's principal object, which may be an instance of Jwt, DefaultOidcUser, or
+     *                  OAuth2User
+     * @return a UserDto object containing the user's ID, email, name, avatar URL, and plan
+     * @throws RuntimeException if the principal is not authenticated or the type is unrecognized
+     */
     @GetMapping("/me")
     public UserDto me(@AuthenticationPrincipal final Object principal) {
         if (principal instanceof Jwt jwt) {

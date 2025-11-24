@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 AMAK Inc. All rights reserved.
+ */
+
 package tech.amak.portbuddy.server.web;
 
 import java.security.SecureRandom;
@@ -28,6 +32,16 @@ public class ExposeController {
     private final AppProperties properties;
     private final TcpProxyClient tcpProxyClient;
 
+    /**
+     * Creates a public HTTP endpoint to expose a local HTTP service by generating a unique
+     * subdomain and tunnel ID. The method constructs a public URL based on the application
+     * gateway settings and links it to the provided local service details (scheme, host, and port).
+     *
+     * @param request the details of the local HTTP service to expose, including the scheme,
+     *                host, and port
+     * @return an {@code ExposeResponse} containing the source (local service details),
+     *     the generated public URL, tunnel ID, and subdomain information for the exposed service
+     */
     @PostMapping("/http")
     public ExposeResponse exposeHttp(final @RequestBody HttpExposeRequest request) {
         final var subdomain = randomSubdomain();
@@ -39,6 +53,17 @@ public class ExposeController {
         return new ExposeResponse(source, publicUrl, null, null, tunnelId, subdomain);
     }
 
+    /**
+     * Allocates a public TCP port to expose a local TCP service using the provided request
+     * details. This method interacts with a TCP proxy client to assign a unique tunnel ID
+     * and configure the TCP exposure.
+     *
+     * @param request the details of the local TCP service to expose, including the host,
+     *                scheme, and port
+     * @return an {@code ExposeResponse} containing the allocated public port, tunnel ID,
+     *     and other relevant exposure details
+     * @throws RuntimeException if the allocation of the public TCP port fails
+     */
     @PostMapping("/tcp")
     public ExposeResponse exposeTcp(final @RequestBody HttpExposeRequest request) {
         final var tunnelId = UUID.randomUUID().toString();

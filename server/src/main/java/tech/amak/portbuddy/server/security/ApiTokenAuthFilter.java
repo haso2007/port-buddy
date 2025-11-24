@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 AMAK Inc. All rights reserved.
+ */
+
 package tech.amak.portbuddy.server.security;
 
 import static java.util.List.of;
@@ -57,7 +61,8 @@ public class ApiTokenAuthFilter extends OncePerRequestFilter {
                 final var userIdOpt = apiTokenService.validateAndGetUserId(token);
                 if (userIdOpt.isPresent()) {
                     final var userId = userIdOpt.get();
-                    final var auth = new UsernamePasswordAuthenticationToken(userId, null, of(new SimpleGrantedAuthority("ROLE_USER")));
+                    final var auth = new UsernamePasswordAuthenticationToken(
+                        userId, null, of(new SimpleGrantedAuthority("ROLE_USER")));
                     SecurityContextHolder.getContext().setAuthentication(auth);
                 }
             }

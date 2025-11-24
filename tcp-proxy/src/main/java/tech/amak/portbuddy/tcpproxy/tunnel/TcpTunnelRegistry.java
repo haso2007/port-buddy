@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 AMAK Inc. All rights reserved.
+ */
+
 package tech.amak.portbuddy.tcpproxy.tunnel;
 
 import java.io.IOException;
@@ -150,7 +154,7 @@ public class TcpTunnelRegistry {
         try {
             connection.out.write(Base64.getDecoder().decode(dataB64));
             connection.out.flush();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.debug("Failed to write to public socket: {}", e.toString());
         }
     }
@@ -171,7 +175,7 @@ public class TcpTunnelRegistry {
         try {
             connection.out.write(data);
             connection.out.flush();
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.debug("Failed to write to public socket: {}", e.toString());
         }
     }
@@ -192,7 +196,7 @@ public class TcpTunnelRegistry {
         if (connection != null) {
             try {
                 connection.socket.close();
-            } catch (IOException ignore) {
+            } catch (final IOException ignore) {
                 log.error("Failed to close public socket: {}", ignore.toString());
             }
         }
@@ -210,7 +214,7 @@ public class TcpTunnelRegistry {
             if (tunnel.session != null && tunnel.session.isOpen()) {
                 tunnel.session.sendMessage(new TextMessage(mapper.writeValueAsString(message)));
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.debug("Failed to send to client: {}", e.toString());
         }
     }
@@ -225,7 +229,7 @@ public class TcpTunnelRegistry {
                 final var payload = BinaryWsFrame.encodeToByteBuffer(connectionId, bytes, offset, length);
                 tunnel.session.sendMessage(new BinaryMessage(payload));
             }
-        } catch (IOException e) {
+        } catch (final IOException e) {
             log.debug("Failed to send binary to client: {}", e.toString());
         }
     }

@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 AMAK Inc. All rights reserved.
+ */
+
 package tech.amak.portbuddy.common;
 
 /**
@@ -16,7 +20,7 @@ public enum Mode {
      * @return the corresponding {@code Mode} enum value.
      * @throws IllegalArgumentException if the string does not match any supported mode.
      */
-    public static Mode from(String mode) {
+    public static Mode from(final String mode) {
         if (mode == null) {
             return HTTP;
         }

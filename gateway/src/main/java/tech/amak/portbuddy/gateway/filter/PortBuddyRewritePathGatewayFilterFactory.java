@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 AMAK Inc. All rights reserved.
+ */
+
 package tech.amak.portbuddy.gateway.filter;
 
 import static org.springframework.cloud.gateway.support.GatewayToStringStyler.filterToStringCreator;
@@ -20,7 +24,7 @@ import reactor.core.publisher.Mono;
 public class PortBuddyRewritePathGatewayFilterFactory extends RewritePathGatewayFilterFactory {
 
     @Override
-    public GatewayFilter apply(Config config) {
+    public GatewayFilter apply(final Config config) {
 
         final var replacement = config.getReplacement().replace("$\\", "$");
         final var pattern = Pattern.compile(config.getRegexp());

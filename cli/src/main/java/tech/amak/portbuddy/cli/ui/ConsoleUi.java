@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 AMAK Inc. All rights reserved.
+ */
+
 package tech.amak.portbuddy.cli.ui;
 
 import java.io.PrintWriter;
@@ -13,6 +17,7 @@ import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.InfoCmp;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import tech.amak.portbuddy.cli.config.ConfigurationService;
@@ -20,6 +25,7 @@ import tech.amak.portbuddy.common.ClientConfig;
 import tech.amak.portbuddy.common.Mode;
 
 @Slf4j
+@RequiredArgsConstructor
 public class ConsoleUi implements HttpLogSink, TcpTrafficSink {
 
     public record HttpLog(String method, String url, int status) {
@@ -43,12 +49,6 @@ public class ConsoleUi implements HttpLogSink, TcpTrafficSink {
     @Getter
     @Setter
     private Runnable onExit;
-
-    public ConsoleUi(final Mode mode, final String localDetails, final String publicDetails) {
-        this.mode = mode;
-        this.localDetails = localDetails;
-        this.publicDetails = publicDetails;
-    }
 
     /**
      * Starts the Console UI. This method initializes the terminal for interactive

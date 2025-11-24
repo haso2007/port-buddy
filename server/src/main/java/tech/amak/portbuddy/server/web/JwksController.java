@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 AMAK Inc. All rights reserved.
+ */
+
 package tech.amak.portbuddy.server.web;
 
 import java.time.Duration;
@@ -24,6 +28,16 @@ public class JwksController {
 
     private final RsaKeyProvider rsaKeyProvider;
 
+    /**
+     * Provides the public JSON Web Key Set (JWKS) for the application.
+     * This endpoint exposes the keys that clients can use to validate
+     * the signatures of issued JSON Web Tokens (JWTs).
+     * The result is cacheable for up to 5 minutes for performance optimization
+     * and convenience of clients consuming this endpoint.
+     *
+     * @return a `ResponseEntity` containing a `JwksResponse` object which
+     *         holds a list of the public JSON Web Keys available for verification.
+     */
     @GetMapping(value = "/.well-known/jwks.json", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<JwksResponse> jwks() {
         final var set = rsaKeyProvider.getPublicJwkSet();

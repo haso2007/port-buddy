@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 AMAK Inc. All rights reserved.
+ */
+
 package tech.amak.portbuddy.cli;
 
 import static tech.amak.portbuddy.cli.utils.JsonUtils.MAPPER;
@@ -46,12 +50,12 @@ public class PortBuddy implements Callable<Integer> {
         arity = "0..2",
         description = "[mode] [host:][port] or [schema://]host[:port]. Examples: '3000', 'localhost', 'example.com:8080', 'https://example.com'"
     )
-    private List<String> args = new ArrayList<>();
+    private final List<String> args = new ArrayList<>();
 
     private final OkHttpClient http = new OkHttpClient();
 
-    static void main(String[] args) {
-        var exit = new CommandLine(new PortBuddy()).execute(args);
+    static void main(final String[] args) {
+        final var exit = new CommandLine(new PortBuddy()).execute(args);
         System.exit(exit);
     }
 
@@ -161,7 +165,15 @@ public class PortBuddy implements Callable<Integer> {
                 ? ("https".equalsIgnoreCase(serverUri.getScheme()) ? 443 : 80)
                 : serverUri.getPort();
             final var secure = "https".equalsIgnoreCase(serverUri.getScheme());
-            final var tcpClient = new TcpTunnelClient(wsHost, wsPort, secure, tunnelId, hostPort.host, hostPort.port, jwt, ui);
+            final var tcpClient = new TcpTunnelClient(
+                wsHost,
+                wsPort,
+                secure,
+                tunnelId,
+                hostPort.host,
+                hostPort.port,
+                jwt,
+                ui);
             final var thread = new Thread(tcpClient::runBlocking, "port-buddy-tcp-client");
             ui.setOnExit(tcpClient::close);
             thread.start();
@@ -203,7 +215,7 @@ public class PortBuddy implements Callable<Integer> {
                 final var str = body.string();
                 return MAPPER.readValue(str, ExposeResponse.class);
             }
-        } catch (Exception e) {
+        } catch (final Exception e) {
             log.warn("Expose HTTP call error: {}", e.toString());
             return null;
         }
@@ -313,7 +325,8 @@ public class PortBuddy implements Callable<Integer> {
             final var parts = url.split("://", 2);
             final var givenScheme = parts[0].toLowerCase();
             if (!givenScheme.equals("http") && !givenScheme.equals("https")) {
-                throw new CommandLine.ParameterException(new CommandLine(this), "Unsupported schema: " + givenScheme + ". Only http or https are allowed.");
+                throw new CommandLine.ParameterException(
+                    new CommandLine(this), "Unsupported schema: " + givenScheme + ". Only http or https are allowed.");
             }
             scheme = givenScheme;
             schemeExplicit = true;

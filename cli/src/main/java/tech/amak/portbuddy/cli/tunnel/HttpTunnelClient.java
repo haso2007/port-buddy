@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 AMAK Inc. All rights reserved.
+ */
+
 package tech.amak.portbuddy.cli.tunnel;
 
 import static tech.amak.portbuddy.cli.utils.JsonUtils.MAPPER;
@@ -169,8 +173,8 @@ public class HttpTunnelClient {
         }
     }
 
-    private String toWebSocketUrl(String base, String path) {
-        var uri = URI.create(base);
+    private String toWebSocketUrl(final String base, final String path) {
+        final var uri = URI.create(base);
         var scheme = uri.getScheme();
         if ("https".equalsIgnoreCase(scheme)) {
             scheme = "wss";
@@ -241,7 +245,7 @@ public class HttpTunnelClient {
                 } else {
                     log.debug("Ignoring non-REQUEST msg");
                 }
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 log.warn("Failed to process WS message: {}", e.toString());
             }
         }
@@ -273,13 +277,14 @@ public class HttpTunnelClient {
             case OPEN -> {
                 // Connect to local target via WS
                 final var localWsScheme = "https".equalsIgnoreCase(localScheme) ? "wss" : "ws";
-                var url = localWsScheme + "://" + localHost + ":" + localPort + (message.getPath() != null ? message.getPath() : "/");
+                var url = localWsScheme + "://" + localHost + ":" + localPort
+                          + (message.getPath() != null ? message.getPath() : "/");
                 if (message.getQuery() != null && !message.getQuery().isBlank()) {
                     url += "?" + message.getQuery();
                 }
                 final var builder = new Request.Builder().url(url);
                 if (message.getHeaders() != null) {
-                    for (var entry : message.getHeaders().entrySet()) {
+                    for (final var entry : message.getHeaders().entrySet()) {
                         if (entry.getKey() != null && entry.getValue() != null) {
                             builder.addHeader(entry.getKey(), entry.getValue());
                         }
@@ -303,7 +308,9 @@ public class HttpTunnelClient {
             case CLOSE -> {
                 final var local = localWebsocketMap.remove(connId);
                 if (local != null) {
-                    local.close(message.getCloseCode() != null ? message.getCloseCode() : 1000, message.getCloseReason());
+                    local.close(message.getCloseCode() != null
+                        ? message.getCloseCode()
+                        : 1000, message.getCloseReason());
                 }
             }
             default -> {
@@ -311,12 +318,10 @@ public class HttpTunnelClient {
         }
     }
 
+    @RequiredArgsConstructor
     private class LocalWsListener extends WebSocketListener {
-        private final String connectionId;
 
-        LocalWsListener(String connectionId) {
-            this.connectionId = connectionId;
-        }
+        private final String connectionId;
 
         @Override
         public void onOpen(final WebSocket webSocket, final Response response) {
@@ -338,7 +343,7 @@ public class HttpTunnelClient {
                 message.setConnectionId(connectionId);
                 message.setText(text);
                 HttpTunnelClient.this.webSocket.send(MAPPER.writeValueAsString(message));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 log.debug("Failed to forward local text WS: {}", e.toString());
             }
         }
@@ -351,7 +356,7 @@ public class HttpTunnelClient {
                 message.setConnectionId(connectionId);
                 message.setDataB64(Base64.getEncoder().encodeToString(bytes.toByteArray()));
                 HttpTunnelClient.this.webSocket.send(MAPPER.writeValueAsString(message));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 log.debug("Failed to forward local binary WS: {}", e.toString());
             }
         }
@@ -366,7 +371,7 @@ public class HttpTunnelClient {
                 message.setCloseCode(code);
                 message.setCloseReason(reason);
                 HttpTunnelClient.this.webSocket.send(MAPPER.writeValueAsString(message));
-            } catch (Exception e) {
+            } catch (final Exception e) {
                 log.debug("Failed to notify close: {}", e.toString());
             }
         }
@@ -389,7 +394,7 @@ public class HttpTunnelClient {
             .method(method, buildBody(method, requestMessage.getBodyB64(), requestMessage.getBodyContentType()));
 
         if (requestMessage.getHeaders() != null) {
-            for (var header : requestMessage.getHeaders().entrySet()) {
+            for (final var header : requestMessage.getHeaders().entrySet()) {
                 final var name = header.getKey();
                 final var values = header.getValue();
                 if (name == null || values == null) {
@@ -402,7 +407,7 @@ public class HttpTunnelClient {
                     // Content-Type is derived from RequestBody media type
                     continue;
                 }
-                for (var value : values) {
+                for (final var value : values) {
                     if (value != null) {
                         targetRequest.addHeader(name, value);
                     }
@@ -474,10 +479,14 @@ public class HttpTunnelClient {
     private RequestBody buildBody(final String method, final String bodyB64, final String contentType) {
         // Methods that usually don't have body
         if (bodyB64 == null) {
-            return methodSupportsBody(method) ? RequestBody.create(new byte[0], contentType != null ? MediaType.parse(contentType) : null) : null;
+            return methodSupportsBody(method)
+                ? RequestBody.create(new byte[0], contentType != null ? MediaType.parse(contentType) : null)
+                : null;
         }
         final var bytes = Base64.getDecoder().decode(bodyB64);
-        final var mediaType = contentType != null && !contentType.isBlank() ? MediaType.parse(contentType) : MediaType.parse("application/octet-stream");
+        final var mediaType = contentType != null && !contentType.isBlank()
+            ? MediaType.parse(contentType)
+            : MediaType.parse("application/octet-stream");
         return RequestBody.create(bytes, mediaType);
     }
 

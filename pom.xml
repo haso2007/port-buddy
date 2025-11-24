@@ -85,7 +85,7 @@
                     <artifactId>maven-checkstyle-plugin</artifactId>
                     <version>3.4.0</version>
                     <configuration>
-                        <configLocation>https://raw.githubusercontent.com/triel-dev/checkstyle/main/checkstyle.xml</configLocation>
+                        <configLocation>https://raw.githubusercontent.com/amak-tech/checkstyle-java/refs/heads/main/checkstyle.xml</configLocation>
                         <failsOnError>true</failsOnError>
                         <failOnViolation>true</failOnViolation>
                         <violationSeverity>warning</violationSeverity>

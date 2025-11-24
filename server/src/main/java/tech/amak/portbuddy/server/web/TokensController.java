@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2025 AMAK Inc. All rights reserved.
+ */
+
 package tech.amak.portbuddy.server.web;
 
 import java.util.List;
@@ -32,8 +36,16 @@ public class TokensController {
         return apiTokenService.listTokens(userId);
     }
 
+    /**
+     * Creates a new API token for the authenticated user.
+     *
+     * @param principal the authenticated user's principal object, used to extract the user ID
+     * @param req the request payload containing the label for the API token; can be null
+     * @return a {@code CreateTokenResponse} object containing the generated token ID and the token itself
+     */
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public CreateTokenResponse create(@AuthenticationPrincipal final Object principal, @RequestBody final CreateTokenRequest req) {
+    public CreateTokenResponse create(@AuthenticationPrincipal final Object principal,
+                                      @RequestBody final CreateTokenRequest req) {
         final var userId = extractUserId(principal);
         final var created = apiTokenService.createToken(userId, req == null ? null : req.getLabel());
         return new CreateTokenResponse(created.id(), created.token());
