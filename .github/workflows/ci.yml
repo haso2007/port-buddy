@@ -37,6 +37,17 @@ jobs:
       - name: Build with Maven
         run: ./mvnw clean package -DskipTests
 
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: jars
+          path: |
+            server/target/*.jar
+            gateway/target/*.jar
+            eureka/target/*.jar
+            tcp-proxy/target/*.jar
+            cli/target/*.jar
+
   deploy:
     name: Build and Push Docker Images
     needs: build
@@ -44,6 +55,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: jars
 
       - name: Login to Yandex Cloud Container Registry
         id: login-cr
