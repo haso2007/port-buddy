@@ -6,6 +6,7 @@ package tech.amak.portbuddy.cli;
 
 import static tech.amak.portbuddy.cli.utils.JsonUtils.MAPPER;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,9 +26,12 @@ import tech.amak.portbuddy.cli.config.ConfigurationService;
 import tech.amak.portbuddy.cli.tunnel.HttpTunnelClient;
 import tech.amak.portbuddy.cli.tunnel.TcpTunnelClient;
 import tech.amak.portbuddy.cli.ui.ConsoleUi;
+import tech.amak.portbuddy.common.ClientConfig;
 import tech.amak.portbuddy.common.Mode;
 import tech.amak.portbuddy.common.dto.ExposeResponse;
 import tech.amak.portbuddy.common.dto.HttpExposeRequest;
+import tech.amak.portbuddy.common.dto.auth.RegisterRequest;
+import tech.amak.portbuddy.common.dto.auth.RegisterResponse;
 import tech.amak.portbuddy.common.dto.auth.TokenExchangeRequest;
 import tech.amak.portbuddy.common.dto.auth.TokenExchangeResponse;
 
@@ -90,13 +94,11 @@ public class PortBuddy implements Callable<Integer> {
         final var config = configurationService.getConfig();
 
         // 1) Ensure API key is present and exchange it for a JWT at startup
-        final var apiKey = config.getApiToken();
-        if (apiKey == null || apiKey.isBlank()) {
-            System.err.println("Authentication required. CLI must be initialized with a valid API Key.\n"
-                               + "Run: port-buddy init {API_TOKEN}");
+        if (!ensureAuthenticated(config)) {
             return CommandLine.ExitCode.SOFTWARE;
         }
 
+        final var apiKey = config.getApiToken();
         final var jwt = exchangeApiTokenForJwt(config.getServerUrl(), apiKey);
         if (jwt == null || jwt.isBlank()) {
             System.err.println("Failed to authenticate with the provided API Key.\n"
@@ -286,6 +288,66 @@ public class PortBuddy implements Callable<Integer> {
         } catch (final Exception e) {
             log.warn("Token exchange call error: {}", e.toString());
             return null;
+        }
+    }
+
+    private boolean ensureAuthenticated(final ClientConfig config) {
+        final var apiKey = config.getApiToken();
+        if (apiKey != null && !apiKey.isBlank()) {
+            return true;
+        }
+
+        System.out.println("No API key found. Please sign up.");
+
+        try {
+            final var request = ConsoleUi.promptForUserRegistration();
+
+            final var newApiKey = registerUser(config.getServerUrl(), request);
+            configurationService.saveApiToken(newApiKey);
+            config.setApiToken(newApiKey);
+            System.out.println("Registration successful! API key saved.");
+            return true;
+        } catch (final Exception e) {
+            System.err.println("Registration failed: " + e.getMessage());
+            return false;
+        }
+    }
+
+    private String registerUser(final String baseUrl,
+                                final RegisterRequest registerRequest) throws IOException {
+        final var url = baseUrl + (baseUrl.endsWith("/") ? "" : "/") + "api/auth/register";
+        final var json = MAPPER.writeValueAsString(registerRequest);
+        final var request = new Request.Builder()
+            .url(url)
+            .post(RequestBody.create(json, MediaType.parse("application/json")))
+            .build();
+
+        try (final var response = http.newCall(request).execute()) {
+            final var respBody = response.body();
+            if (respBody == null) {
+                if (!response.isSuccessful()) {
+                    throw new IOException("Server returned: " + response.message());
+                }
+                throw new IOException("Empty response from server");
+            }
+
+            if (response.code() == 503) {
+                throw new IOException("Server is unavailable. Please try again later.");
+            }
+
+            final var bodyStr = respBody.string();
+            try {
+                final var registerResponse = MAPPER.readValue(bodyStr, RegisterResponse.class);
+                if (!registerResponse.isSuccess()) {
+                    throw new IOException(registerResponse.getMessage());
+                }
+                return registerResponse.getApiKey();
+            } catch (final IOException e) {
+                if (!response.isSuccessful()) {
+                    throw new IOException("Server returned: " + response.message());
+                }
+                throw e;
+            }
         }
     }
 

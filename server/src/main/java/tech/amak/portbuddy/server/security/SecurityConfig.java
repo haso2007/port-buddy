@@ -6,6 +6,7 @@ package tech.amak.portbuddy.server.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
@@ -27,7 +30,7 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
     private final ApiTokenAuthFilter apiTokenAuthFilter;
-    private final Oauth2SuccessHandler oauth2SuccessHandler;
+    private final @Lazy Oauth2SuccessHandler oauth2SuccessHandler;
 
     @Bean
     @Order(1)
@@ -37,7 +40,8 @@ public class SecurityConfig {
             .cors(AbstractHttpConfigurer::disable)
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.POST, "/api/auth/token-exchange").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/auth/token-exchange",
+                    "/api/auth/login", "/api/auth/register").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(apiTokenAuthFilter, BearerTokenAuthenticationFilter.class)
@@ -76,6 +80,11 @@ public class SecurityConfig {
                 .successHandler(oauth2SuccessHandler)
             );
         return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean

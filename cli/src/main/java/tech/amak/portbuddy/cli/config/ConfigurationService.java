@@ -12,16 +12,22 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
 import lombok.extern.slf4j.Slf4j;
 import tech.amak.portbuddy.common.ClientConfig;
 
 @Slf4j
 public class ConfigurationService {
 
-    private static final String ENV_PORT_BUDDY_ENV = "PORT_BUDDY_ENV";
+    private static final String PORT_BUDDY_ENV = "PORT_BUDDY_ENV";
+    private static final String PORT_BUDDY_ENV_DEV = "dev";
     private static final String APP_DIR = ".port-buddy";
     private static final String TOKEN_FILE = "token";
 
@@ -33,6 +39,7 @@ public class ConfigurationService {
 
     private ConfigurationService() {
         try {
+            configureLogging();
             loadConfig();
             loadToken();
         } catch (final Exception e) {
@@ -41,8 +48,22 @@ public class ConfigurationService {
         }
     }
 
+    private void configureLogging() {
+        final var env = System.getenv(PORT_BUDDY_ENV);
+
+        final var loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+
+        final var rootLogger = loggerContext.getLogger(Logger.ROOT_LOGGER_NAME);
+        rootLogger.setLevel(Level.ERROR);
+
+        if (PORT_BUDDY_ENV_DEV.equalsIgnoreCase(env)) {
+            final var appLogger = loggerContext.getLogger("tech.amak.portbuddy");
+            appLogger.setLevel(Level.DEBUG);
+        }
+    }
+
     private void loadConfig() throws IOException {
-        final var envPart = Optional.ofNullable(System.getenv(ENV_PORT_BUDDY_ENV))
+        final var envPart = Optional.ofNullable(System.getenv(PORT_BUDDY_ENV))
             .map(String::toLowerCase)
             .map("-%s"::formatted)
             .orElse("");

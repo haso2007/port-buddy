@@ -4,6 +4,7 @@
 
 package tech.amak.portbuddy.cli.ui;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.Duration;
 import java.util.ArrayDeque;
@@ -12,6 +13,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.jline.reader.LineReaderBuilder;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 import org.jline.utils.InfoCmp;
@@ -23,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import tech.amak.portbuddy.cli.config.ConfigurationService;
 import tech.amak.portbuddy.common.ClientConfig;
 import tech.amak.portbuddy.common.Mode;
+import tech.amak.portbuddy.common.dto.auth.RegisterRequest;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -51,6 +54,62 @@ public class ConsoleUi implements HttpLogSink, TcpTrafficSink {
     private Runnable onExit;
 
     /**
+     * Prompts the user for registration details (name, email, password) using the console.
+     *
+     * @return a RegisterRequest containing the input data
+     * @throws IOException if an I/O error occurs or console is not available
+     */
+    public static RegisterRequest promptForUserRegistration() throws IOException {
+        try (final var terminal = buildTerminal()) {
+            final var reader = LineReaderBuilder.builder().terminal(terminal).build();
+            
+            var name = reader.readLine("Name: ");
+            if (name == null || name.isBlank()) {
+                name = "Unknown Buddy";
+            }
+
+            String email;
+            while (true) {
+                email = reader.readLine("Email: ");
+                if (isValidEmail(email)) {
+                    break;
+                }
+                terminal.writer().println("Invalid email address. Please try again.");
+                terminal.flush();
+            }
+
+            String password;
+            while (true) {
+                password = reader.readLine("Password: ", '*');
+                if (password != null && password.length() >= 8) {
+                    break;
+                }
+                terminal.writer().println("Password must be at least 8 characters long.");
+                terminal.flush();
+            }
+            return new RegisterRequest(email, name, password);
+        }
+    }
+
+    private static boolean isValidEmail(final String email) {
+        return email != null && email.matches("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$");
+    }
+
+    private static Terminal buildTerminal() throws IOException {
+        final var terminal = TerminalBuilder.builder()
+            .streams(System.in, System.out)
+            .system(true)
+            .jansi(true)
+            .jna(true)
+            .jni(true)
+            .ffm(true)
+            .exec(true)
+            .dumb(true)
+            .build();
+        return terminal;
+    }
+
+    /**
      * Starts the Console UI. This method initializes the terminal for interactive
      * output, sets up signal handling for interrupt signals, and spawns a new thread
      * to handle the rendering loop.
@@ -67,16 +126,7 @@ public class ConsoleUi implements HttpLogSink, TcpTrafficSink {
             return;
         }
         try {
-            terminal = TerminalBuilder.builder()
-                .streams(System.in, System.out)
-                .system(true)
-                .jansi(true)
-                .jna(true)
-                .jni(true)
-                .ffm(true)
-                .exec(true)
-                .dumb(true)
-                .build();
+            terminal = buildTerminal();
             out = terminal.writer();
             terminal.handle(Terminal.Signal.INT, signal -> {
                 stop();
