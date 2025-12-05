@@ -24,25 +24,25 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import tech.amak.portbuddy.cli.config.ConfigurationService;
 import tech.amak.portbuddy.common.ClientConfig;
-import tech.amak.portbuddy.common.Mode;
+import tech.amak.portbuddy.common.TunnelType;
 import tech.amak.portbuddy.common.dto.auth.RegisterRequest;
 
 @Slf4j
 @RequiredArgsConstructor
-public class ConsoleUi implements HttpLogSink, TcpTrafficSink {
+public class ConsoleUi implements HttpLogSink, NetTrafficSink {
 
     public record HttpLog(String method, String url, int status) {
     }
 
-    private final Mode mode;
+    private final TunnelType tunnelType;
     private final String localDetails;
     private final String publicDetails;
 
     private Terminal terminal;
     private PrintWriter out;
     private final Deque<HttpLog> httpLogs = new ArrayDeque<>();
-    private final AtomicLong tcpInBytes = new AtomicLong();
-    private final AtomicLong tcpOutBytes = new AtomicLong();
+    private final AtomicLong inBytes = new AtomicLong();
+    private final AtomicLong outBytes = new AtomicLong();
     private final AtomicBoolean running = new AtomicBoolean(false);
     private final CountDownLatch exit = new CountDownLatch(1);
     private final ClientConfig config = ConfigurationService.INSTANCE.getConfig();
@@ -137,7 +137,7 @@ public class ConsoleUi implements HttpLogSink, TcpTrafficSink {
 
         clear();
 
-        out.printf("Port Buddy - Mode: %s%n", mode.name().toLowerCase());
+        out.printf("Port Buddy - Mode: %s%n", tunnelType.name().toLowerCase());
         out.println();
         out.printf("Local:  %s%n", localDetails);
         out.printf("Public: %s%n", publicDetails);
@@ -210,12 +210,12 @@ public class ConsoleUi implements HttpLogSink, TcpTrafficSink {
 
     @Override
     public void onBytesIn(final long bytes) {
-        tcpInBytes.addAndGet(Math.max(0, bytes));
+        inBytes.addAndGet(Math.max(0, bytes));
     }
 
     @Override
     public void onBytesOut(final long bytes) {
-        tcpOutBytes.addAndGet(Math.max(0, bytes));
+        outBytes.addAndGet(Math.max(0, bytes));
     }
 
     private void renderLoop() {
@@ -245,7 +245,7 @@ public class ConsoleUi implements HttpLogSink, TcpTrafficSink {
     }
 
     private void render() {
-        if (mode == Mode.HTTP) {
+        if (tunnelType == TunnelType.HTTP) {
 
             synchronized (httpLogs) {
                 if (httpLogs.isEmpty()) {
@@ -259,8 +259,8 @@ public class ConsoleUi implements HttpLogSink, TcpTrafficSink {
                 }
             }
         } else {
-            final var inKb = tcpInBytes.get() / 1024.0;
-            final var outKb = tcpOutBytes.get() / 1024.0;
+            final var inKb = inBytes.get() / 1024.0;
+            final var outKb = outBytes.get() / 1024.0;
             out.printf("TCP traffic: IN %.2f KB | OUT %.2f KB%n", inKb, outKb);
         }
 

@@ -19,13 +19,14 @@ import feign.RequestInterceptor;
 import tech.amak.portbuddy.common.dto.ExposeResponse;
 
 @FeignClient(
-    name = "tcp-proxy",
-    configuration = TcpProxyClient.Configuration.class
+    name = "net-proxy",
+    configuration = NetProxyClient.Configuration.class
 )
-public interface TcpProxyClient {
+public interface NetProxyClient {
 
-    @PostMapping("/api/tcp-proxy/expose")
-    ExposeResponse exposePort(@RequestParam("tunnelId") UUID tunnelId);
+    @PostMapping("/api/net-proxy/expose")
+    ExposeResponse exposePort(@RequestParam("tunnelId") UUID tunnelId,
+                              @RequestParam("type") String protocol);
 
     class Configuration {
 

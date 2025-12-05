@@ -7,9 +7,10 @@ package tech.amak.portbuddy.common;
 /**
  * Supported expose modes.
  */
-public enum Mode {
+public enum TunnelType {
     HTTP,
-    TCP;
+    TCP,
+    UDP;
 
     /**
      * Converts a string representation of a mode to its corresponding {@code Mode} enum value.
@@ -20,13 +21,14 @@ public enum Mode {
      * @return the corresponding {@code Mode} enum value.
      * @throws IllegalArgumentException if the string does not match any supported mode.
      */
-    public static Mode from(final String mode) {
+    public static TunnelType from(final String mode) {
         if (mode == null) {
             return HTTP;
         }
         return switch (mode.toLowerCase()) {
             case "http" -> HTTP;
             case "tcp" -> TCP;
+            case "udp" -> UDP;
             default -> throw new IllegalArgumentException("Unknown mode: " + mode);
         };
     }

@@ -18,14 +18,13 @@ import org.springframework.web.server.ResponseStatusException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import tech.amak.portbuddy.common.dto.ExposeRequest;
 import tech.amak.portbuddy.common.dto.ExposeResponse;
-import tech.amak.portbuddy.common.dto.HttpExposeRequest;
-import tech.amak.portbuddy.server.client.TcpProxyClient;
+import tech.amak.portbuddy.server.client.NetProxyClient;
 import tech.amak.portbuddy.server.config.AppProperties;
 import tech.amak.portbuddy.server.db.repo.UserRepository;
 import tech.amak.portbuddy.server.service.DomainService;
 import tech.amak.portbuddy.server.service.TunnelService;
-import tech.amak.portbuddy.server.tunnel.TunnelRegistry;
 
 @RestController
 @RequestMapping(path = "/api/expose", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -33,9 +32,8 @@ import tech.amak.portbuddy.server.tunnel.TunnelRegistry;
 @Slf4j
 public class ExposeController {
 
-    private final TunnelRegistry registry;
     private final AppProperties properties;
-    private final TcpProxyClient tcpProxyClient;
+    private final NetProxyClient netProxyClient;
     private final TunnelService tunnelService;
     private final UserRepository userRepository;
     private final DomainService domainService;
@@ -52,7 +50,7 @@ public class ExposeController {
      */
     @PostMapping("/http")
     public ExposeResponse exposeHttp(final @AuthenticationPrincipal Jwt jwt,
-                                     final @RequestBody HttpExposeRequest request) {
+                                     final @RequestBody ExposeRequest request) {
         final var userId = resolveUserId(jwt);
         final var user = userRepository.findById(userId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
@@ -78,19 +76,19 @@ public class ExposeController {
     }
 
     /**
-     * Allocates a public TCP port to expose a local TCP service using the provided request
+     * Allocates a public Net port to expose a local TCP or UDP service using the provided request
      * details. This method interacts with a TCP proxy client to assign a unique tunnel ID
      * and configure the TCP exposure.
      *
-     * @param request the details of the local TCP service to expose, including the host,
+     * @param request the details of the local TCP or UDP service to expose, including the host,
      *                scheme, and port
      * @return an {@code ExposeResponse} containing the allocated public port, tunnel ID,
      *     and other relevant exposure details
-     * @throws RuntimeException if the allocation of the public TCP port fails
+     * @throws RuntimeException if the allocation of the public TCP or UDP port fails
      */
-    @PostMapping("/tcp")
-    public ExposeResponse exposeTcp(final @AuthenticationPrincipal Jwt jwt,
-                                    final @RequestBody HttpExposeRequest request) {
+    @PostMapping("/net")
+    public ExposeResponse exposeNet(final @AuthenticationPrincipal Jwt jwt,
+                                    final @RequestBody ExposeRequest request) {
         final var userId = resolveUserId(jwt);
         final var user = userRepository.findById(userId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
@@ -98,15 +96,17 @@ public class ExposeController {
 
         final var apiKeyId = extractApiKeyId(jwt);
         // Pre-create tunnel and use its DB id as tunnelId
-        final var tunnel = tunnelService.createPendingTcpTunnel(account.getId(), user.getId(), apiKeyId, request);
+        final var tunnel = tunnelService.createNetTunnel(account.getId(), user.getId(), apiKeyId, request);
         final var tunnelId = tunnel.getId();
 
-        // Ask the selected tcp-proxy to allocate a public TCP port for this tunnelId
+        // Ask the selected net-proxy to allocate a public TCP or UDP port for this tunnelId
         try {
-            final var exposeResponse = tcpProxyClient.exposePort(tunnelId);
+            final var exposeResponse = netProxyClient.exposePort(tunnelId, "tcp");
             log.info("Expose TCP port response: {}", exposeResponse);
 
-            tunnelService.updateTcpTunnelPublic(tunnelId, exposeResponse.publicHost(), exposeResponse.publicPort());
+            tunnelService.updateTunnelPublicConnection(
+                tunnelId, exposeResponse.publicHost(), exposeResponse.publicPort());
+
             return exposeResponse;
         } catch (final Exception e) {
             log.error("Failed to allocate public TCP port for tunnelId={}: {}", tunnelId, e.getMessage(), e);
