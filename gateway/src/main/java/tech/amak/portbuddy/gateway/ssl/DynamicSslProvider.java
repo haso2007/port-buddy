@@ -5,6 +5,8 @@
 package tech.amak.portbuddy.gateway.ssl;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.SequenceInputStream;
 import java.time.Duration;
 
 import org.springframework.stereotype.Service;
@@ -108,6 +110,24 @@ public class DynamicSslProvider {
                 }
 
                 try {
+                    if (cert.fullChainPath() != null) {
+                        return SslContextBuilder.forServer(
+                            new File(cert.fullChainPath()),
+                            new File(cert.privateKeyPath())
+                        ).build();
+                    }
+
+                    if (cert.chainPath() != null && !cert.chainPath().isBlank()) {
+                        log.debug("Full chain path missing, but chain path present. Concatenating for {}.",
+                            finalLookupDomain);
+                        try (var certIs = new FileInputStream(cert.certificatePath());
+                             var chainIs = new FileInputStream(cert.chainPath());
+                             var fullChainIs = new SequenceInputStream(certIs, chainIs);
+                             var keyIs = new FileInputStream(cert.privateKeyPath())) {
+                            return SslContextBuilder.forServer(fullChainIs, keyIs).build();
+                        }
+                    }
+
                     return SslContextBuilder.forServer(
                         new File(cert.certificatePath()),
                         new File(cert.privateKeyPath())

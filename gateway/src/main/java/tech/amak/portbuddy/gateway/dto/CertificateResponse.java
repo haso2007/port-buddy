@@ -8,6 +8,7 @@ public record CertificateResponse(
     String domain,
     String certificatePath,
     String privateKeyPath,
-    String chainPath
+    String chainPath,
+    String fullChainPath
 ) {
 }

@@ -86,6 +86,20 @@ public class CertificateStorageService {
         return file;
     }
 
+    /**
+     * Writes full certificate chain to PEM file.
+     *
+     * @param domain       domain
+     * @param fullChainPem full chain PEM
+     * @return path to full chain file
+     */
+    public Path writeFullChainPem(final String domain, final String fullChainPem) {
+        final var baseDir = resolveBaseDir();
+        final var file = baseDir.resolve(safe(domain) + ".fullchain.pem");
+        writeString(file, fullChainPem);
+        return file;
+    }
+
     private Path resolveBaseDir() {
         final var resource = properties.storage().certificatesDir();
         // Expecting formats like "file:/abs/path" or just a directory. Normalize to Path.

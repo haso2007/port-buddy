@@ -223,6 +223,7 @@ public class AcmeCertificateService {
         final var keyPath = storageService.writePrivateKeyPem(domain, domainKeyPair);
         final var certPath = storageService.writeCertPem(domain, leafCertPem);
         final var chainPath = storageService.writeChainPem(domain, chainPem);
+        final var fullChainPath = storageService.writeFullChainPem(domain, leafCertPem + chainPem);
 
         // 8) Update DB
         var certificate = certificateRepository.findByDomain(domain).orElse(null);
@@ -240,6 +241,7 @@ public class AcmeCertificateService {
         certificate.setPrivateKeyPath(keyPath.toAbsolutePath().toString());
         certificate.setCertificatePath(certPath.toAbsolutePath().toString());
         certificate.setChainPath(chainPath.toAbsolutePath().toString());
+        certificate.setFullChainPath(fullChainPath.toAbsolutePath().toString());
         certificateRepository.save(certificate);
 
         // Single-entity model: no separate root-domain metadata to update
@@ -418,6 +420,7 @@ public class AcmeCertificateService {
             final var keyPath = storageService.writePrivateKeyPem(domain, domainKeyPair);
             final var certPath = storageService.writeCertPem(domain, leafCertPem);
             final var chainPath = storageService.writeChainPem(domain, chainPem);
+            final var fullChainPath = storageService.writeFullChainPem(domain, leafCertPem + chainPem);
 
             var certificate = certificateRepository.findByDomain(domain).orElse(null);
             if (certificate == null) {
@@ -433,6 +436,7 @@ public class AcmeCertificateService {
             certificate.setPrivateKeyPath(keyPath.toAbsolutePath().toString());
             certificate.setCertificatePath(certPath.toAbsolutePath().toString());
             certificate.setChainPath(chainPath.toAbsolutePath().toString());
+            certificate.setFullChainPath(fullChainPath.toAbsolutePath().toString());
             certificateRepository.save(certificate);
 
             // Single-entity model: no separate root-domain metadata to update

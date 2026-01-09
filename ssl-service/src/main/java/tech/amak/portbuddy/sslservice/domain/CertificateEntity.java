@@ -79,6 +79,9 @@ public class CertificateEntity {
     @Column(name = "chain_path", length = 1024)
     private String chainPath;
 
+    @Column(name = "full_chain_path", length = 1024)
+    private String fullChainPath;
+
     @CreatedBy
     @Column(name = "created_by", length = 100, updatable = false)
     private String createdBy;
