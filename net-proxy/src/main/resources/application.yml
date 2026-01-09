@@ -22,8 +22,8 @@ spring:
 app:
   public-host: ${NET_PROXY_PUBLIC_HOST:localhost}
   web-socket:
-    max-text-message-size: 100MB
-    max-binary-message-size: 1GB
+    max-text-message-size: 10MB
+    max-binary-message-size: 10MB
     session-idle-timeout: 10m
   jwt:
     jwk-set-uri: lb://port-buddy-server/.well-known/jwks.json
