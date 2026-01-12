@@ -1,13 +1,10 @@
-# Runtime stage - Using Alpine with gcompat for a very small image
-FROM oraclelinux:10-slim
+FROM eclipse-temurin:25-jre
 
 WORKDIR /app
+COPY cli/target/cli-*.jar /app/app.jar
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
-# Install necessary libraries for GraalVM native image on Alpine
-RUN #apk add --no-cache gcompat zlib libc6-compat
-
-COPY cli/target/portbuddy /app/portbuddy
-COPY entrypoint-cli.sh /app/entrypoint.sh
-RUN chmod +x /app/portbuddy /app/entrypoint.sh
+ENV JVM_OPTS="--enable-native-access=ALL-UNNAMED"
 
 ENTRYPOINT ["/app/entrypoint.sh"]
