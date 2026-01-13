@@ -18,7 +18,7 @@ Whether you're developing a web app, testing webhooks, or sharing access to a lo
 
 ### 1. Installation
 
-Download the latest version of the `port-buddy` CLI for your platform (Windows, Linux, or Mac).
+Download the latest version of the `portbuddy` CLI for your platform (Windows, Linux, or Mac).
 
 ### 2. Authentication
 
@@ -27,7 +27,7 @@ Before exposing ports, you need to authenticate your CLI.
 2. Generate an API Token in your dashboard.
 3. Run the following command:
    ```bash
-   port-buddy init {YOUR_API_TOKEN}
+   portbuddy init {YOUR_API_TOKEN}
    ```
 
 ### 3. Expose a Port
@@ -35,27 +35,27 @@ Before exposing ports, you need to authenticate your CLI.
 #### HTTP (Default)
 Expose a local web server running on port 3000:
 ```bash
-port-buddy 3000
+portbuddy 3000
 ```
 Output: `http://localhost:3000 exposed to: https://abc123.portbuddy.dev`
 
 #### TCP
 Expose a local PostgreSQL database:
 ```bash
-port-buddy tcp 5432
+portbuddy tcp 5432
 ```
 Output: `tcp localhost:5432 exposed to: net-proxy-3.portbuddy.dev:43452`
 
 #### UDP
 Expose a local UDP service:
 ```bash
-port-buddy udp 9000
+portbuddy udp 9000
 ```
 
 ## 🛠️ CLI Usage
 
 ```text
-Usage: port-buddy [options] [mode] [host:][port]
+Usage: portbuddy [options] [mode] [host:][port]
 
 Modes:
   http (default), tcp, udp
