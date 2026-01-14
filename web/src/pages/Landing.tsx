@@ -144,7 +144,7 @@ export default function Landing() {
                   <span className="text-slate-500">HTTP requests log:</span>
                 </div>
                 <div className="flex gap-8">
-                  <span className="text-slate-500">GET</span>
+                  <span className="text-slate-500">POST</span>
                   <span className="text-white">200 https://my-static-subdomain.portbuddy.dev/api/webhooks/stripe</span>
                 </div>
               </div>
