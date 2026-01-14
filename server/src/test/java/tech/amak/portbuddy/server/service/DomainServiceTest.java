@@ -31,12 +31,17 @@ import tech.amak.portbuddy.server.db.entity.DomainEntity;
 import tech.amak.portbuddy.server.db.entity.TunnelStatus;
 import tech.amak.portbuddy.server.db.repo.DomainRepository;
 import tech.amak.portbuddy.server.db.repo.TunnelRepository;
+import tech.amak.portbuddy.server.db.repo.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
 class DomainServiceTest {
 
     @Mock
     private DomainRepository domainRepository;
+
+    @Mock
+    private UserRepository userRepository;
+
     @Mock
     private TunnelRepository tunnelRepository;
     @Mock
@@ -73,7 +78,8 @@ class DomainServiceTest {
             tunnelRepository,
             appProps,
             passwordEncoder,
-            sslServiceClient);
+            sslServiceClient,
+            userRepository);
         account = new AccountEntity();
         account.setId(UUID.randomUUID());
     }

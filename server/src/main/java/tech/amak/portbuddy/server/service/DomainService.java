@@ -29,6 +29,7 @@ import tech.amak.portbuddy.server.db.entity.DomainEntity;
 import tech.amak.portbuddy.server.db.entity.TunnelStatus;
 import tech.amak.portbuddy.server.db.repo.DomainRepository;
 import tech.amak.portbuddy.server.db.repo.TunnelRepository;
+import tech.amak.portbuddy.server.db.repo.UserRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -40,9 +41,11 @@ public class DomainService {
     private final DomainRepository domainRepository;
     private final TunnelRepository tunnelRepository;
     private final AppProperties properties;
-    private final SecureRandom random = new SecureRandom();
     private final PasswordEncoder passwordEncoder;
     private final SslServiceClient sslServiceClient;
+    private final UserRepository userRepository;
+
+    private final SecureRandom random = new SecureRandom();
 
     @Transactional(readOnly = true)
     public List<DomainEntity> getDomains(final AccountEntity account) {
@@ -227,12 +230,16 @@ public class DomainService {
      *
      * @param id      domain id
      * @param account account entity
+     * @param userId  user id
      * @return updated domain entity
      */
     @Transactional
-    public DomainEntity verifyCname(final UUID id, final AccountEntity account) {
+    public DomainEntity verifyCname(final UUID id, final AccountEntity account, final UUID userId) {
         final var domain = domainRepository.findByIdAndAccount(id, account)
             .orElseThrow(() -> new RuntimeException("Domain not found"));
+
+        final var user = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
 
         final var customDomain = domain.getCustomDomain();
         if (customDomain == null || customDomain.isBlank()) {
@@ -248,10 +255,7 @@ public class DomainService {
 
             // Trigger SSL issuance
             try {
-                final String userEmail = account.getUsers().isEmpty()
-                    ? "support@portbuddy.dev"
-                    : account.getUsers().get(0).getEmail();
-                sslServiceClient.submitJob(customDomain, userEmail, true);
+                sslServiceClient.submitJob(customDomain, user.getEmail(), true);
             } catch (final Exception e) {
                 log.error("Failed to trigger SSL issuance for {}", customDomain, e);
             }

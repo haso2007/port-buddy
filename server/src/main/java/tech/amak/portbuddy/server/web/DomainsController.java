@@ -4,6 +4,9 @@
 
 package tech.amak.portbuddy.server.web;
 
+import static tech.amak.portbuddy.server.security.JwtService.resolveAccountId;
+import static tech.amak.portbuddy.server.security.JwtService.resolveUserId;
+
 import java.util.List;
 import java.util.UUID;
 
@@ -157,11 +160,12 @@ public class DomainsController {
     public DomainDto verifyCname(final @AuthenticationPrincipal Jwt principal,
                                  @PathVariable("id") final UUID id) {
         final var account = getAccount(principal);
-        return toDto(domainService.verifyCname(id, account));
+        final var userId = resolveUserId(principal);
+        return toDto(domainService.verifyCname(id, account, userId));
     }
 
     private AccountEntity getAccount(final Jwt jwt) {
-        final var accountId = tech.amak.portbuddy.server.security.JwtService.resolveAccountId(jwt);
+        final var accountId = resolveAccountId(jwt);
         final var userId = UUID.fromString(jwt.getSubject());
         return userRepository.findById(userId)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"))
