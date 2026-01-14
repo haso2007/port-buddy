@@ -40,7 +40,14 @@ public class PortBuddyRewritePathGatewayFilterFactory extends RewritePathGateway
 
                 ServerWebExchangeUtils.getUriTemplateVariables(exchange).forEach((key, value) -> {
                     final var placeholder = "${%s}".formatted(key);
-                    replacementReference.set(replacementReference.get().replace(placeholder, value));
+                    var cleanValue = value;
+                    if ("customDomain".equals(key)) {
+                        final var colonIdx = cleanValue.indexOf(':');
+                        if (colonIdx > 0) {
+                            cleanValue = cleanValue.substring(0, colonIdx);
+                        }
+                    }
+                    replacementReference.set(replacementReference.get().replace(placeholder, cleanValue));
                 });
 
                 final var newPath = pattern.matcher(path).replaceAll(replacementReference.get());

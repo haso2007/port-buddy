@@ -152,10 +152,23 @@ public class PublicWebSocketProxyHandler extends AbstractWebSocketHandler {
             if (commaIdx > 0) {
                 host = host.substring(0, commaIdx).trim();
             }
+
+            // Strip port if present
+            final var colonIdx = host.indexOf(':');
+            if (colonIdx > 0) {
+                host = host.substring(0, colonIdx);
+            }
+
             if (host.endsWith(properties.gateway().subdomainHost())) {
                 final var idx = host.indexOf('.');
                 if (idx > 0) {
                     return host.substring(0, idx);
+                }
+            } else {
+                // Check if it's a custom domain
+                final var domainOpt = domainRepository.findByCustomDomain(host.toLowerCase());
+                if (domainOpt.isPresent()) {
+                    return domainOpt.get().getSubdomain();
                 }
             }
         }

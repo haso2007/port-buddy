@@ -101,11 +101,17 @@ public class IngressController {
     public void ingressCustomDomainPathBased(final @PathVariable("customDomain") String customDomain,
                                              final HttpServletRequest request,
                                              final HttpServletResponse response) throws IOException {
-        final var domainOpt = domainRepository.findByCustomDomain(customDomain);
+        var lookupDomain = customDomain.toLowerCase();
+        final var colonIdx = lookupDomain.indexOf(':');
+        if (colonIdx > 0) {
+            lookupDomain = lookupDomain.substring(0, colonIdx);
+        }
+
+        final var domainOpt = domainRepository.findByCustomDomain(lookupDomain);
         if (domainOpt.isPresent()) {
             forwardViaTunnel(domainOpt.get().getSubdomain(), request, response);
         } else {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Custom domain not found");
+            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Custom domain not found: " + lookupDomain);
         }
     }
 
