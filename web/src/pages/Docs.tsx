@@ -25,10 +25,10 @@ export default function Docs() {
         url="https://portbuddy.dev/docs"
       />
       
-      <div className="flex-1 relative pt-20 pb-20 px-4">
+      <div className="flex-1 relative pt-12 md:pt-20 pb-20">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/20 via-slate-900/0 to-slate-900/0 pointer-events-none" />
         
-        <div className="container mx-auto max-w-5xl relative z-10">
+        <div className="container max-w-5xl relative z-10">
           <div className="flex flex-col md:flex-row gap-12">
             {/* Sidebar Navigation */}
             <aside className="md:w-64 flex-shrink-0">

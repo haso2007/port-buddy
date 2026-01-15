@@ -20,10 +20,9 @@ export default function NotFound() {
         keywords="404, page not found, port buddy"
       />
 
-      <section className="relative pt-24 md:pt-36 px-4">
+      <section className="relative pt-12 md:pt-36">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/20 via-slate-900/0 to-slate-900/0 pointer-events-none" />
-
-        <div className="container relative mx-auto max-w-4xl text-center">
+<div className="container relative max-w-4xl text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium mb-6">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>

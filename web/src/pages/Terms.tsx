@@ -9,10 +9,10 @@ export default function Terms() {
         canonical="https://portbuddy.dev/terms"
         url="https://portbuddy.dev/terms"
       />
-      <div className="flex-1 relative pt-32 pb-20 px-4">
+      <div className="flex-1 relative pt-12 md:pt-32 pb-20">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/10 via-slate-900/0 to-slate-900/0 pointer-events-none" />
         
-        <div className="container mx-auto max-w-3xl relative z-10">
+        <div className="container max-w-3xl relative z-10">
           <h1 className="text-4xl font-bold text-white mb-8">Terms and Conditions</h1>
           
           <div className="prose prose-invert max-w-none text-slate-300 space-y-6">

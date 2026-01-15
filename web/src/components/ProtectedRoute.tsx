@@ -21,7 +21,7 @@ export default function ProtectedRoute({ children, role }: { children: React.Rea
                     </div>
                 </aside>
                 {/* Main shell */}
-                <section className="flex-1 ml-64 bg-slate-950 flex flex-col">
+                <section className="flex-1 lg:ml-64 bg-slate-950 flex flex-col">
                     <div className="h-16 border-b border-slate-800"></div>
                     <div className="p-8 flex-1">
                         <div className="max-w-4xl h-64 bg-slate-900/50 rounded-2xl animate-pulse"></div>

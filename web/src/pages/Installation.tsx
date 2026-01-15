@@ -19,11 +19,11 @@ export default function Installation() {
         canonical="https://portbuddy.dev/install"
         url="https://portbuddy.dev/install"
       />
-      <div className="flex-1 relative pt-20 pb-20 px-4">
+      <div className="flex-1 relative pt-12 pb-12 md:pb-20">
         {/* Background gradients */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/20 via-slate-900/0 to-slate-900/0 pointer-events-none" />
         
-        <div className="container mx-auto max-w-4xl relative z-10">
+        <div className="container max-w-4xl relative z-10">
           <div className="text-center mb-12">
             <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 mb-6">
               <CommandLineIcon className="w-8 h-8" />
@@ -60,7 +60,7 @@ export default function Installation() {
             </div>
 
             {/* Content Area */}
-            <div className="p-8 min-h-[400px]">
+            <div className="p-4 md:p-8 min-h-[400px]">
               {activeTab === 'macos' && (
                 <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                   <Step 

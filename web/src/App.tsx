@@ -1,5 +1,6 @@
 import { Link, Navigate, Outlet, Route, Routes, useLocation } from 'react-router-dom'
 import { useEffect, useState } from 'react'
+import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import Landing from './pages/Landing'
 import Installation from './pages/Installation'
 import Docs from './pages/Docs'
@@ -30,6 +31,14 @@ import Privacy from './pages/Privacy'
 import NotFound from './pages/NotFound'
 import ServerError from './pages/ServerError'
 import Passcode from './pages/Passcode'
+
+function ScrollToTop() {
+  const { pathname } = useLocation()
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
+  return null
+}
 
 function ScrollToHash() {
   const location = useLocation()
@@ -66,7 +75,7 @@ export default function App() {
   const showHeader = !isApp && !['/login', '/register', '/forgot-password', '/reset-password'].includes(location.pathname)
 
   return (
-    <div className="min-h-full flex flex-col bg-slate-950 text-slate-200">
+    <div className="min-h-full w-full flex flex-col bg-slate-950 text-slate-200">
       <ProgressBar />
       {showHeader && (
       <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur fixed w-full top-0 z-50">
@@ -78,62 +87,85 @@ export default function App() {
             </span>
             Port Buddy
           </Link>
-          <nav className="flex items-center gap-8 text-sm font-medium">
-            <a 
-              href="https://github.com/amak-tech/port-buddy" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-slate-400 hover:text-white transition-colors flex items-center gap-1.5"
-            >
-              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
-              </svg>
-              GitHub
-            </a>
-            <Link to="/install" className="text-slate-400 hover:text-white transition-colors" aria-label="Installation instructions">Installation</Link>
-            <Link to="/docs" className="text-slate-400 hover:text-white transition-colors" aria-label="Documentation">Docs</Link>
-            <Link to="/#pricing" className="text-slate-400 hover:text-white transition-colors" aria-label="View pricing">Pricing</Link>
-            {!user ? (
-              // Only Login button when not authenticated
-              <Link 
-                to="/login" 
-                className="bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2 rounded-lg transition-all shadow-lg shadow-indigo-500/20"
+          <nav className="flex items-center gap-4 lg:gap-8 text-sm font-medium">
+            <div className="hidden lg:flex items-center gap-8">
+              <a 
+                href="https://github.com/amak-tech/port-buddy" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-slate-400 hover:text-white transition-colors flex items-center gap-1.5"
               >
-                Login
-              </Link>
-            ) : (
-              // Authenticated: show hamburger menu
-              <div className="relative">
+                <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>
+                </svg>
+                GitHub
+              </a>
+              <Link to="/install" className="text-slate-400 hover:text-white transition-colors" aria-label="Installation instructions">Installation</Link>
+              <Link to="/docs" className="text-slate-400 hover:text-white transition-colors" aria-label="Documentation">Docs</Link>
+              <Link to="/#pricing" className="text-slate-400 hover:text-white transition-colors" aria-label="View pricing">Pricing</Link>
+            </div>
+            
+            <div className="relative">
+              <button
+                className="lg:hidden w-10 h-10 inline-flex items-center justify-center rounded-lg border border-slate-700 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                aria-label="Open menu"
+                aria-expanded={menuOpen}
+                onClick={() => setMenuOpen((v) => !v)}
+              >
+                <span className="sr-only">Menu</span>
+                {menuOpen ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />}
+              </button>
+
+              {!user && (
+                <Link 
+                  to="/login" 
+                  className="hidden lg:inline-block bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2 rounded-lg transition-all shadow-lg shadow-indigo-500/20"
+                >
+                  Login
+                </Link>
+              )}
+
+              {user && (
                 <button
-                  className="w-10 h-10 inline-flex items-center justify-center rounded-lg border border-slate-700 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                  className="hidden lg:inline-flex w-10 h-10 items-center justify-center rounded-lg border border-slate-700 text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
                   aria-label="Open menu"
                   aria-expanded={menuOpen}
                   onClick={() => setMenuOpen((v) => !v)}
                 >
                   <span className="sr-only">Menu</span>
-                  <span aria-hidden="true" className="flex flex-col items-center justify-center gap-1.5">
-                    <span className="block w-5 h-0.5 bg-current"></span>
-                    <span className="block w-5 h-0.5 bg-current"></span>
-                    <span className="block w-5 h-0.5 bg-current"></span>
-                  </span>
+                  {menuOpen ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />}
                 </button>
-                {menuOpen && (
-                  <div className="absolute right-0 mt-3 w-56 rounded-xl border border-slate-800 bg-slate-900 shadow-2xl p-2 z-50">
-                    <Link to="/app" className="block px-4 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-colors" onClick={() => setMenuOpen(false)}>Dashboard</Link>
-                    <Link to="/app/settings" className="block px-4 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-colors" onClick={() => setMenuOpen(false)}>Settings</Link>
-                    <Link to="/app/billing" className="block px-4 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-colors" onClick={() => setMenuOpen(false)}>Billing</Link>
+              )}
+
+              {menuOpen && (
+                <div className="absolute right-0 mt-3 w-64 rounded-xl border border-slate-800 bg-slate-900 shadow-2xl p-2 z-50">
+                  <div className="lg:hidden">
+                    <Link to="/install" className="block px-4 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-colors" onClick={() => setMenuOpen(false)}>Installation</Link>
+                    <Link to="/docs" className="block px-4 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-colors" onClick={() => setMenuOpen(false)}>Documentation</Link>
+                    <Link to="/#pricing" className="block px-4 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-colors" onClick={() => setMenuOpen(false)}>Pricing</Link>
                     <div className="h-px bg-slate-800 my-2 mx-2"></div>
-                    <button className="block w-full text-left px-4 py-2.5 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors" onClick={() => { setMenuOpen(false); void logout() }}>Logout</button>
                   </div>
-                )}
-              </div>
-            )}
+                  
+                  {user ? (
+                    <>
+                      <Link to="/app" className="block px-4 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-colors" onClick={() => setMenuOpen(false)}>Dashboard</Link>
+                      <Link to="/app/settings" className="block px-4 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-colors" onClick={() => setMenuOpen(false)}>Settings</Link>
+                      <Link to="/app/billing" className="block px-4 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-colors" onClick={() => setMenuOpen(false)}>Billing</Link>
+                      <div className="h-px bg-slate-800 my-2 mx-2"></div>
+                      <button className="block w-full text-left px-4 py-2.5 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors" onClick={() => { setMenuOpen(false); void logout() }}>Logout</button>
+                    </>
+                  ) : (
+                    <Link to="/login" className="block px-4 py-2.5 rounded-lg text-indigo-400 font-medium hover:bg-indigo-500/10 transition-colors" onClick={() => setMenuOpen(false)}>Login</Link>
+                  )}
+                </div>
+              )}
+            </div>
           </nav>
         </div>
       </header>
       )}
 
-      <main className="flex-1">
+      <main className={`flex-1 w-full ${showHeader ? 'pt-[73px]' : ''}`}>
         <Routes>
           <Route path="/" element={<Landing/>} />
           <Route path="/install" element={<Installation/>} />
@@ -169,6 +201,7 @@ export default function App() {
           <Route path="/500" element={<ServerError/>} />
           <Route path="*" element={<NotFound/>} />
         </Routes>
+        <ScrollToTop />
         <ScrollToHash />
         <Outlet />
       </main>
@@ -179,7 +212,7 @@ export default function App() {
           <div className="flex items-center gap-2 text-slate-400 text-sm">
              <span>© {new Date().getFullYear()} Port Buddy. All rights reserved.</span>
           </div>
-          <div className="flex gap-8 text-sm font-medium">
+          <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 text-sm font-medium">
             <a 
               href="https://github.com/amak-tech/port-buddy" 
               target="_blank" 

@@ -15,6 +15,8 @@ import {
   UserGroupIcon,
   PowerIcon,
   ShieldCheckIcon,
+  XMarkIcon,
+  Bars3Icon,
 } from '@heroicons/react/24/outline'
 
 type UserAccount = {
@@ -29,6 +31,7 @@ export default function AppLayout() {
   const { user, logout, switchAccount } = useAuth()
   const [accounts, setAccounts] = useState<UserAccount[]>([])
   const [showAccountSwitcher, setShowAccountSwitcher] = useState(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
   useEffect(() => {
     if (user) {
@@ -39,12 +42,22 @@ export default function AppLayout() {
   const otherAccounts = accounts.filter(a => a.accountId !== user?.accountId)
 
   return (
-    <div className="min-h-screen flex bg-slate-950">
+    <div className="min-h-screen w-full flex bg-slate-950">
+      {/* Mobile Sidebar Overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 z-40 bg-slate-950/60 backdrop-blur-sm lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="fixed top-0 left-0 h-screen w-64 border-r border-slate-800 bg-slate-900">
+      <aside className={`fixed top-0 left-0 h-screen w-64 border-r border-slate-800 bg-slate-900 z-[60] transition-transform duration-300 lg:translate-x-0 ${
+        isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}>
         <div className="h-full flex flex-col">
           {/* Top app title (fixed at top) */}
-          <div className="sticky top-0 z-10 border-b border-slate-800 bg-slate-900 px-6 py-5">
+          <div className="sticky top-0 z-10 border-b border-slate-800 bg-slate-900 px-6 py-5 flex items-center justify-between">
             <Link to="/" className="flex items-center gap-3 text-lg font-bold text-white hover:opacity-90 transition-opacity">
               <span className="relative flex h-3 w-3">
                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
@@ -52,6 +65,12 @@ export default function AppLayout() {
               </span>
               Port Buddy
             </Link>
+            <button 
+              className="lg:hidden p-2 -mr-2 text-slate-400 hover:text-white"
+              onClick={() => setIsSidebarOpen(false)}
+            >
+              <XMarkIcon className="h-6 w-6" />
+            </button>
           </div>
 
           {/* Account Switcher */}
@@ -92,19 +111,19 @@ export default function AppLayout() {
 
           {/* Nav list (scrollable middle) */}
           <nav className="flex-1 overflow-y-auto px-4 py-6 space-y-1">
-            <SideLink to="/app" end label="Tunnels" Icon={ArrowsRightLeftIcon} />
-            <SideLink to="/app/tokens" label="Access Tokens" Icon={LockClosedIcon} />
-            <SideLink to="/app/domains" label="Domains" Icon={GlobeAltIcon} />
-            <SideLink to="/app/ports" label="Port Reservations" Icon={LinkIcon} />
-            <SideLink to="/app/team" label="Team" Icon={UserGroupIcon} />
+            <SideLink to="/app" end label="Tunnels" Icon={ArrowsRightLeftIcon} onClick={() => setIsSidebarOpen(false)} />
+            <SideLink to="/app/tokens" label="Access Tokens" Icon={LockClosedIcon} onClick={() => setIsSidebarOpen(false)} />
+            <SideLink to="/app/domains" label="Domains" Icon={GlobeAltIcon} onClick={() => setIsSidebarOpen(false)} />
+            <SideLink to="/app/ports" label="Port Reservations" Icon={LinkIcon} onClick={() => setIsSidebarOpen(false)} />
+            <SideLink to="/app/team" label="Team" Icon={UserGroupIcon} onClick={() => setIsSidebarOpen(false)} />
             {(user?.roles?.includes('ACCOUNT_ADMIN')) && (
-              <SideLink to="/app/billing" label="Billing" Icon={WalletIcon} />
+              <SideLink to="/app/billing" label="Billing" Icon={WalletIcon} onClick={() => setIsSidebarOpen(false)} />
             )}
             {user?.roles?.includes('ACCOUNT_ADMIN') && (
-              <SideLink to="/app/settings" label="Settings" Icon={Cog8ToothIcon} />
+              <SideLink to="/app/settings" label="Settings" Icon={Cog8ToothIcon} onClick={() => setIsSidebarOpen(false)} />
             )}
             {user?.roles?.includes('ADMIN') && (
-              <SideLink to="/app/admin" label="Admin Panel" Icon={ShieldCheckIcon} />
+              <SideLink to="/app/admin" label="Admin Panel" Icon={ShieldCheckIcon} onClick={() => setIsSidebarOpen(false)} />
             )}
           </nav>
 
@@ -117,7 +136,7 @@ export default function AppLayout() {
               </Link>
             </div>
             <div className="flex items-center justify-between gap-3">
-              <Link to="/app/profile" className="flex items-center gap-3 min-w-0 hover:opacity-80 transition-opacity">
+              <Link to="/app/profile" className="flex items-center gap-3 min-w-0 hover:opacity-80 transition-opacity" onClick={() => setIsSidebarOpen(false)}>
                 {user?.avatarUrl ? (
                   <img src={user.avatarUrl} alt="avatar" className="w-9 h-9 rounded-full border border-slate-700" />
                 ) : (
@@ -145,14 +164,21 @@ export default function AppLayout() {
       </aside>
 
       {/* Main content */}
-      <section className="flex-1 min-w-0 flex flex-col min-h-0 ml-64 bg-slate-950">
+      <section className="flex-1 w-full min-w-0 flex flex-col min-h-0 lg:ml-64 bg-slate-950">
         <PageHeaderProvider>
           {/* Page Header (sticky at top) */}
-          <div className="sticky top-0 z-10 border-b border-slate-800 bg-slate-950/80 backdrop-blur px-8 py-5">
+          <div className="sticky top-0 z-10 border-b border-slate-800 bg-slate-950/80 backdrop-blur px-4 lg:px-8 py-5 flex items-center gap-4">
+            <button
+              className="lg:hidden p-2 -ml-2 text-slate-400 hover:text-white transition-colors"
+              onClick={() => setIsSidebarOpen(true)}
+              aria-label="Open sidebar"
+            >
+              <Bars3Icon className="h-6 w-6" />
+            </button>
             <HeaderTitle />
           </div>
           {/* Page body */}
-          <div className="px-8 py-8 flex-1 overflow-y-auto" data-scroll-root>
+          <div className="px-4 lg:px-8 py-8 flex-1 overflow-y-auto" data-scroll-root>
             <Outlet />
           </div>
         </PageHeaderProvider>
@@ -163,11 +189,12 @@ export default function AppLayout() {
 
 type IconType = ComponentType<SVGProps<SVGSVGElement>>
 
-function SideLink({ to, label, end = false, Icon }: { to: string, label: string, end?: boolean, Icon?: IconType }) {
+function SideLink({ to, label, end = false, Icon, onClick }: { to: string, label: string, end?: boolean, Icon?: IconType, onClick?: () => void }) {
   return (
     <NavLink
       to={to}
       end={end}
+      onClick={onClick}
       className={({ isActive }) => 
         `flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 ${
           isActive 

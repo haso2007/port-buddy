@@ -34,7 +34,7 @@ export default function Landing() {
   };
 
   return (
-    <div className="flex flex-col gap-24 pb-24">
+    <div className="flex flex-col gap-16 md:gap-24 pb-16 md:pb-24">
       <Seo 
         title="Port Buddy - Expose Localhost to the Internet | Ngrok Alternative"
         description="Securely expose your local web server, database, or TCP/UDP service to the internet. The best free ngrok alternative for developers. Supports HTTP, TCP & UDP tunneling."
@@ -44,10 +44,10 @@ export default function Landing() {
         url="https://portbuddy.dev/"
       />
       {/* Hero Section */}
-      <section className="relative pt-20 md:pt-32 px-4">
+      <section className="relative pt-12">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-indigo-900/20 via-slate-900/0 to-slate-900/0 pointer-events-none" />
         
-        <div className="container relative mx-auto max-w-6xl">
+        <div className="container relative">
           <div className="text-center max-w-3xl mx-auto">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-medium mb-6">
               <span className="relative flex h-2 w-2">
@@ -106,7 +106,7 @@ export default function Landing() {
           </div>
 
           {/* Terminal Preview */}
-          <div className="mt-20 mx-auto max-w-4xl bg-slate-900 rounded-xl border border-slate-800 shadow-2xl overflow-hidden">
+          <div className="mt-12 md:mt-20 mx-auto max-w-4xl bg-slate-900 rounded-xl border border-slate-800 shadow-2xl overflow-hidden">
             <div className="flex items-center px-4 py-3 bg-slate-800/50 border-b border-slate-800 gap-2">
               <div className="w-3 h-3 rounded-full bg-red-500/20 border border-red-500/50"></div>
               <div className="w-3 h-3 rounded-full bg-yellow-500/20 border border-yellow-500/50"></div>
@@ -154,7 +154,7 @@ export default function Landing() {
       </section>
 
       {/* Features Grid */}
-      <section id="features" className="container mx-auto px-4">
+      <section id="features" className="container">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
             Everything you need for 
@@ -205,7 +205,7 @@ export default function Landing() {
       </section>
 
       {/* How it Works (Infographic style) */}
-      <section id="how-it-works" className="container mx-auto px-4 py-12">
+      <section id="how-it-works" className="container py-12">
         <div className="bg-slate-900/50 border border-slate-800 rounded-2xl p-8 md:p-12">
           <h2 className="text-3xl font-bold text-center text-white mb-16">How it works</h2>
           
@@ -252,7 +252,7 @@ export default function Landing() {
       </section>
 
       {/* Use Cases */}
-      <section id="use-cases" className="container mx-auto px-4">
+      <section id="use-cases" className="container">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div>
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
@@ -286,9 +286,9 @@ export default function Landing() {
             </div>
           </div>
           
-          <div className="relative">
+          <div className="relative overflow-hidden lg:overflow-visible">
             <div className="absolute -inset-4 bg-gradient-to-r from-indigo-500 to-purple-500 opacity-20 blur-3xl rounded-full"></div>
-            <div className="relative bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-2xl">
+            <div className="relative bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-2xl overflow-hidden">
                <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-4">
                  <div className="text-sm font-medium text-slate-300">Webhook Inspector</div>
                  <div className="flex gap-2">
@@ -298,24 +298,24 @@ export default function Landing() {
                  </div>
                </div>
                <div className="space-y-3 font-mono text-xs md:text-sm">
-                 <div className="bg-slate-800/50 p-3 rounded border-l-2 border-green-500">
-                   <div className="flex justify-between text-slate-400 mb-1">
-                     <span>POST /webhooks/stripe</span>
-                     <span className="text-green-400">200 OK</span>
+                 <div className="bg-slate-800/50 p-3 rounded border-l-2 border-green-500 overflow-hidden">
+                   <div className="flex justify-between text-slate-400 mb-1 gap-4">
+                     <span className="truncate">POST /webhooks/stripe</span>
+                     <span className="text-green-400 shrink-0">200 OK</span>
                    </div>
                    <div className="text-slate-500 truncate">{`{ "id": "evt_1M...", "type": "payment_intent.succeeded" }`}</div>
                  </div>
-                 <div className="bg-slate-800/50 p-3 rounded border-l-2 border-green-500">
-                   <div className="flex justify-between text-slate-400 mb-1">
-                     <span>POST /webhooks/github</span>
-                     <span className="text-green-400">200 OK</span>
+                 <div className="bg-slate-800/50 p-3 rounded border-l-2 border-green-500 overflow-hidden">
+                   <div className="flex justify-between text-slate-400 mb-1 gap-4">
+                     <span className="truncate">POST /webhooks/github</span>
+                     <span className="text-green-400 shrink-0">200 OK</span>
                    </div>
                    <div className="text-slate-500 truncate">{`{ "action": "opened", "pull_request": { ... } }`}</div>
                  </div>
-                 <div className="bg-slate-800/50 p-3 rounded border-l-2 border-red-500">
-                   <div className="flex justify-between text-slate-400 mb-1">
-                     <span>POST /api/callback</span>
-                     <span className="text-red-400">500 Error</span>
+                 <div className="bg-slate-800/50 p-3 rounded border-l-2 border-red-500 overflow-hidden">
+                   <div className="flex justify-between text-slate-400 mb-1 gap-4">
+                     <span className="truncate">POST /api/callback</span>
+                     <span className="text-red-400 shrink-0">500 Error</span>
                    </div>
                    <div className="text-slate-500 truncate">Error: Invalid signature</div>
                  </div>
@@ -326,7 +326,7 @@ export default function Landing() {
       </section>
 
       {/* Pricing */}
-      <section id="pricing" className="container mx-auto px-4">
+      <section id="pricing" className="container">
         <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-16">Simple Pricing</h2>
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           <PriceCard 
@@ -369,8 +369,8 @@ export default function Landing() {
       </section>
 
       {/* Final CTA */}
-      <section className="container mx-auto px-4 pt-12">
-        <div className="bg-gradient-to-r from-indigo-900/50 to-purple-900/50 border border-indigo-500/30 rounded-2xl p-12 text-center relative overflow-hidden">
+      <section className="container pt-12">
+        <div className="bg-gradient-to-r from-indigo-900/50 to-purple-900/50 border border-indigo-500/30 rounded-2xl p-8 md:p-12 text-center relative overflow-hidden">
           <div className="relative z-10">
             <h2 className="text-3xl font-bold text-white mb-4">Ready to get started?</h2>
             <p className="text-slate-300 mb-8 max-w-xl mx-auto">
