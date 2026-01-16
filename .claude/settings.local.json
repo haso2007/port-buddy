@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nadd Claude Code guide and Synology Docker deployment docs\n\n- CLAUDE.md: development commands and code architecture overview\n- docker_deploy.md: step-by-step guide for deploying on Synology NAS\n- includes known limitations for WebSocket/Socket.io apps\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n\\)\")"
+    ]
+  }
+}
